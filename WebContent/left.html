@@ -1,0 +1,127 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>无标题文档</title>
+<link href="css/style.css" rel="stylesheet" type="text/css" />
+<script language="JavaScript" src="js/jquery.js"></script>
+
+<script type="text/javascript">
+	$(function() {
+		//导航切换
+		$(".menuson li").click(function() {
+			$(".menuson li.active").removeClass("active")
+			$(this).addClass("active");
+		});
+
+		$('.title').click(function() {
+			var $ul = $(this).next('ul');
+			$('dd').find('ul').slideUp();
+			if ($ul.is(':visible')) {
+				$(this).next('ul').slideUp();
+			} else {
+				$(this).next('ul').slideDown();
+			}
+		});
+	})
+</script>
+
+
+</head>
+
+<body style="background: #f0f9fd;">
+	<div class="lefttop">
+		<span></span>开放实验室管理平台
+	</div>
+
+	<dl class="leftmenu">
+		<!--用户管理模块开始-->
+		<dd>
+			<div class="title">
+				<span><img src="images/leftico01.png" /></span>用户管理
+			</div>
+			<ul class="menuson">
+				<li><cite></cite><a href="user/addUser.jsp" target="rightFrame">添加用户</a><i></i></li>
+				<li class="active"><cite></cite><a href="DisplayUserServlet?pageTag=modify&currPage=1"
+					target="rightFrame">修改用户</a><i></i></li>
+				<li><cite></cite><a href="DisplayUserServlet?pageTag=delete&currPage=1"
+					target="rightFrame">删除用户</a><i></i></li>
+				<li><cite></cite><a href="DisplayUserServlet?pageTag=ban&currPage=1"
+					target="rightFrame">禁用用户</a><i></i></li>
+			</ul>
+		</dd>
+		<!--用户管理模块结束-->
+
+
+		<!--院系管理模块开始-->
+		<dd>
+			<div class="title">
+				<span><img src="images/leftico02.png" /></span>院系管理
+			</div>
+			<ul class="menuson">
+				<li><cite></cite><a href="school/addSchool.jsp"
+					target="rightFrame">添加学校</a><i></i></li>
+				<li><cite></cite><a href="SchoolManagementServlet?pageTag=addDepartment"
+					target="rightFrame">添加院系</a><i></i></li>
+				<li><cite></cite><a href="SchoolManagementServlet?pageTag=addMajor"
+					target="rightFrame">添加专业</a><i></i></li>
+			</ul>
+		</dd>
+		<!--院系管理模块结束-->
+
+		<!--实验室成员管理模块开始-->
+		<dd>
+			<div class="title">
+				<span><img src="images/leftico03.png" /></span>实验室成员管理
+			</div>
+			<ul class="menuson">
+				<li><cite></cite><a href="SchoolManagementServlet?pageTag=addMember"
+					target="rightFrame">注册成员</a><i></i></li>
+				<li><cite></cite><a href="DisplayLabMemberServlet?pageTag=select"
+					target="rightFrame" name="source">查询成员</a><i></i></li>
+				<li><cite></cite><a href="DisplayLabMemberServlet?pageTag=modify"
+					target="rightFrame">修改成员</a><i></i></li>
+				<li><cite></cite><a href="member/memberStatistical.jsp"
+					target="rightFrame">成员统计</a><i></i></li>
+			</ul>
+		</dd>
+		<!--实验室成员管理模块结束 -->
+
+		<!--公开课管理模块开始 -->
+		<dd>
+			<div class="title">
+				<span><img src="images/leftico04.png" /></span>公开课管理
+			</div>
+			<ul class="menuson">
+				<li><cite></cite><a href="SchoolManagementServlet?pageTag=addPublicClass"
+					target="rightFrame">录入公开课</a><i></i></li>
+				<li><cite></cite><a href="SelectOpenCourseAjaxServlet?status=first"
+					target="rightFrame">查询公开课</a><i></i></li><!-- DisplayOpenCourseServlet,  -->
+				<li><cite></cite><a href="SchoolManagementServlet?pageTag=registPerson"
+					target="rightFrame">公开课人员登记</a><i></i></li>
+				<li><cite></cite><a href="DisplayCourseMemberServlet"
+					target="rightFrame">公开课人员查询</a><i></i></li>
+			</ul>
+		</dd>
+		<!--公开课管理模块结束 -->
+
+		<!--创新学分管理模块开始 -->
+		<dd>
+			<div class="title">
+				<span><img src="images/leftico04.png" /></span>创新学分管理
+			</div>
+			<ul class="menuson">
+				<li><cite></cite><a href="score/addScore.jsp"
+					target="rightFrame">录入学分</a><i></i></li>
+				<li><cite></cite><a href="DisplayCreditServlet"
+					target="rightFrame">查询学分</a><i></i></li>
+
+			</ul>
+		</dd>
+		<!--创新学分管理模块结束 -->
+
+	</dl>
+
+
+</body>
+</html>

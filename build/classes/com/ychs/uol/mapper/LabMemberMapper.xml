@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org/DTD Mapper 3.0" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ychs.uol.mapper.LabMemberMapper"> <!-- namespace指定为Mapper接口；面向接口编程，无需程序员实现该接口，由MyBatis完成 -->
+	
+	<insert id="insertLabMember"
+		parameterType="com.ychs.uol.model.LabMember"><!-- 全限定的类名 -->
+		INSERT INTO uol_labmember(membername, memberid, sex, grade,
+		birthplace, phonenumber, email, schoolid, deptid, majorid, schooljob,
+		joindate, certificate, status, labjob, trainning, skill, remark)
+		VALUES(#{memberName},#{memberId},#{sex},#{grade},#{birthPlace},#{phoneNumber},#{email},#{schoolId},#{deptId},#{majorId},#{schoolJob},TO_DATE(#{joinDate},'yyyy-mm-dd'),#{certificate},#{status},#{labJob},#{trainning},#{skill},#{remark})
+	</insert>
+	
+	<!-- 根据成员ID查询实验室成员 -->
+	<select id="selectLabMemberById" parameterType="String" resultType="com.ychs.uol.model.LabMember">
+	   SELECT * FROM uol_labmemberview WHERE memberid = #{memberId}
+	</select>
+
+    
+
+	<!-- 多条件组合查询1 -->
+	<!-- <select id="selectLabMember" parameterType="java.util.Map" resultMap="labMemberMap"> 
+		SELECT * FROM uol_labmember WHERE 1=1 <if test="memberName != null"> AND 
+		membername LIKE #{memberName} </if> <if test="grade != null"> AND grade = 
+		#{grade} </if> <if test="phoneNumber != null"> AND phonenumber = #{phoneNumber} 
+		</if> <if test="school != null"> AND school = #{school} </if> <if test="department 
+		!= null"> AND department = #{department} </if> <if test="major != null"> 
+		AND major = #{major} </if> <if test="status != null"> AND status = #{status} 
+		</if> <if test="labJob != null"> AND labjob = #{labJob} </if> <if test="certificate 
+		!= null"> AND certificate = #{certificate} </if> </select> -->
+
+	<!-- 多条件组合查询2 -->
+	<select id="selectLabMember" parameterType="java.util.Map"
+		resultMap="labMemberMap">
+		SELECT * FROM uol_labmemberview
+		<where>
+			<if test="memberName != null">
+				AND membername LIKE '%'||#{memberName}||'%' 
+			</if>
+			<if test="memberId != null">
+                AND memberid LIKE '%'||#{memberId}||'%' 
+            </if>
+			<if test="grade != null">
+				AND grade = #{grade}
+			</if>
+			<if test="phoneNumber != null">
+				AND phonenumber LIKE '%'||#{phoneNumber}||'%' 
+			</if>
+			<if test="schoolId != null">
+				AND schoolid = #{schoolId}
+			</if>
+			<if test="deptId != null">
+				AND deptid = #{deptId}
+			</if>
+			<if test="majorId != null">
+				AND majorid = #{majorId}
+			</if>
+			<if test="status != null">
+				AND status = #{status}
+			</if>
+			<if test="labJob != null">
+				AND labjob = #{labJob}
+			</if>
+			<if test="certificate != null">
+				AND certificate = #{certificate}
+			</if>
+		</where>
+	</select>
+
+	<resultMap id="labMemberMap"
+		type="com.ychs.uol.model.LabMember">
+		<id property="memberId" column="memberid" />
+		<result property="memberName" column="membername" />
+		<result property="sex" column="sex" />
+		<result property="grade" column="grade" />
+		<result property="birthPlace" column="birthplace" />
+		<result property="phoneNumber" column="phonenumber" />
+		<result property="email" column="email" />
+        <result property="school" column="school" />
+        <result property="schoolId" column="schoolid" />
+
+        <result property="department" column="department" />
+        <result property="departmentId" column="departmentid" />
+        <result property="major" column="major" />
+        <result property="majorId" column="majorid" />
+		<result property="schoolJob" column="schooljob" />
+		<result property="joinDate" column="joindate" />
+		<result property="certificate" column="certificate" />
+		<result property="status" column="status" />
+
+		<result property="labJob" column="labjob" />
+		<result property="skill" column="skill" />
+		<result property="remark" column="remark" />
+	</resultMap>
+
+	<update id="modifyLabMember"
+		parameterType="com.ychs.uol.model.LabMember">
+		UPDATE uol_labmember
+		<set>
+			<if test="memberName != null">memberName=#{memberName},</if>
+			<if test="sex != null">sex=#{sex},</if>
+			<if test="grade != null">grade=#{grade},</if>
+			<if test="birthPlace != null">birthPlace=#{birthPlace},</if>
+			<if test="phoneNumber != null">phonenumber=#{phoneNumber},</if>
+
+			<if test="email != null">email=#{email},</if>
+			<if test="schoolId != null">schoolid=#{schoolId},</if>
+			<if test="deptId != null">deptid=#{deptId},</if>
+			<if test="majorId != null">majorid=#{majorId},</if>
+			<if test="schoolJob != null">schooljob=#{schoolJob},</if>
+
+			<if test="joinDate != null">joindate=TO_DATE(#{joinDate},'yyyy-mm-dd'),</if>
+			<if test="certificate != null">certificate=#{certificate},</if>
+			<if test="status != null">status=#{status},</if>
+			<if test="labJob != null">labJob=#{labJob},</if>
+			<if test="trainning != null">trainning=#{trainning},</if>
+			
+			<if test="skill != null">skill=#{skill},</if>
+			<if test="remark != null">remark=#{remark}</if>
+		</set>
+		WHERE memberid = #{memberId}
+	</update>
+
+
+
+
+</mapper>

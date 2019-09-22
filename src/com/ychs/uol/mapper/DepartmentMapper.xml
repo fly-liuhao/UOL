@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org/DTD Mapper 3.0" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ychs.uol.mapper.DepartmentMapper"> <!-- namespace指定为Mapper接口；面向接口编程，无需程序员实现该接口，由MyBatis完成 -->
+	<insert id="insertDepartment"
+		parameterType="com.ychs.uol.model.Department"><!-- 全限定的类名 -->
+		<selectKey keyProperty="deptId" resultType="String"
+			keyColumn="deptNo" order="BEFORE">
+			SELECT deptseq.nextval as deptNo FROM dual
+		</selectKey>
+		INSERT INTO uol_department(deptid, deptname, deptinfo, schoolid)
+		VALUES(#{deptId},#{deptName},#{deptInfo},#{schoolId})
+	</insert>
+
+	<delete id="deleteDepartment" parameterType="String">
+		DELETE
+		uol_department WHERE schoolid IN (SELECT schoolid FROM uol_school
+		WHERE schoolname = #{schoolName})
+	</delete>
+
+	<!-- 查询院系 -->
+	<select id="selectDepartment" resultMap="deptMap">
+		SELECT * FROM uol_department
+		<where>
+			<if test="deptId != null">deptid = #{deptId}</if>
+            <if test="deptName != null ">AND deptname = #{deptName}</if>
+            <if test="schoolId != null ">AND schoolid = #{schoolId}</if>
+		</where>
+	</select>
+	<resultMap type="com.ychs.uol.model.Department" id="deptMap">
+		<result property="deptId" column="deptid" />
+		<result property="deptName" column="deptname" />
+		<result property="deptInfo" column="deptinfo" />
+        <result property="schoolId" column="schoolid" />
+	</resultMap>
+</mapper>

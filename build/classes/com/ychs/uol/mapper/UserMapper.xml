@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org/DTD Mapper 3.0" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ychs.uol.mapper.UserMapper"> <!-- namespace指定为Mapper接口；面向接口编程，无需程序员实现该接口，由MyBatis完成 -->
+	<!-- 登陆认证 -->
+	<select id="checkUser" resultMap="userMap">
+		SELECT * FROM uol_user WHERE
+		username = #{userName} AND userpwd = #{userPwd}
+	</select>
+
+	<!-- 添加用户 -->
+	<insert id="insertUser" parameterType="com.ychs.uol.model.User"><!-- 全限定的类名 -->
+	   <!-- 使主键自增 -->
+        <selectKey keyProperty="userId" resultType="String"
+            keyColumn="userNo" order="BEFORE">
+            SELECT userseq.nextval as userNo FROM dual
+        </selectKey>
+		INSERT INTO uol_user(userid, username, userpwd, realname, sex, job,
+		remark, status)
+		VALUES(#{userId},#{userName},#{userPwd},#{realName},#{sex},#{job},#{remark},#{status})
+		<!-- 不能加分号 -->
+	</insert>
+
+	<!-- 删除用户 -->
+	<delete id="deleteUser" parameterType="String">
+		DELETE FROM uol_user WHERE
+		userid = #{userId}
+	</delete>
+
+	<!-- 根据用户ID查询用户 -->
+	<select id="selectUserById" parameterType="String"
+		resultType="com.ychs.uol.model.User">
+		SELECT * FROM uol_user WHERE userid = #{userId}
+	</select>
+	
+	<!-- 根据用户名查询用户 -->
+	<select id="selectUserByName" parameterType="String"
+		resultType="com.ychs.uol.model.User">
+		SELECT * FROM uol_user WHERE username = #{userName}
+	</select>
+
+	<!-- 查询所有用户 -->
+	<select id="selectAllUser" resultMap="userMap">
+		SELECT * FROM uol_user
+	</select>
+
+	<!-- 自定义返回集合类型，命名为：userMap，建立uol_user表字段和User类属性之间的映射关系 -->
+	<resultMap id="userMap" type="com.ychs.uol.model.User">
+		<!-- 主键 -->
+		<id property="userId" column="userid" />
+		<!-- 非主键 -->
+		<result property="userName" column="username" />
+		<result property="userPwd" column="userpsw" />
+		<result property="realName" column="realname" />
+		<result property="sex" column="sex" />
+		<result property="job" column="job" />
+		<result property="remark" column="remark" />
+		<result property="status" column="status" />
+	</resultMap>
+
+	<!-- 修改用户 -->
+	<update id="modifyUser" parameterType="com.ychs.uol.model.User">
+		UPDATE uol_user SET
+		username = #{userName}, userpwd = #{userPwd},realname =
+		#{realName},sex = #{sex},job = #{job},remark = #{remark}, status =
+		#{status} WHERE userid = #{userId}
+	</update>
+
+	<!-- 禁用/启用用户 -->
+	<update id="banUser" parameterType="String">
+	UPDATE uol_user SET status=CASE WHEN status ='1' THEN '0' ELSE '1' END WHERE userid = #{userId}
+	</update>
+
+	<!-- 分页显示，方式一：使用MyBaits自带的类 -->
+	<select id="selectUserPage" resultType="com.ychs.uol.model.User">
+		SELECT * FROM uol_user
+	</select>
+
+	<!-- 分页显示，方式二：自己写SQL语句，通过参数控制 -->
+	<select id="selectUserPageSql" resultMap="userMap">
+		SELECT * FROM (SELECT
+		ROWNUM AS rowno, u.* FROM uol_user u WHERE ROWNUM &lt;= #{arg1})
+		WHERE
+		rowno &gt;= #{arg0}
+	</select>
+
+
+	<!-- 添加用户，主键自增 -->
+	<insert id="insertUserKeyAutoInc"
+		parameterType="com.ychs.uol.model.User">
+		<selectKey keyProperty="userId" resultType="String"
+			keyColumn="userNo" order="BEFORE">
+			SELECT myseq.nextval as userNo FROM dual
+			<!-- SELECT MAX(userid)+1 AS userNo FROM uol_user -->
+		</selectKey>
+		INSERT INTO uol_user(userid, username, userpwd, realname, sex, job,
+		remark, status)
+		VALUES(#{userId},#{userName},#{userPwd},#{realName},#{sex},#{job},#{remark},#{status})
+		<!-- 不能加分号 -->
+	</insert>
+
+
+	<!-- 批量删除用户 -->
+	<delete id="deleteUserBatch" parameterType="java.util.List">
+		DELETE FROM uol_user WHERE userid IN
+		<foreach collection="list" item="item" open="(" separator=","
+			close=")">
+			#{item}
+		</foreach>
+	</delete>
+
+
+	<!-- 多条件查询用户（只能使用一个条件） -->
+	<select id="selectUserMulCondition"
+		parameterType="java.util.Map" resultMap="userMap">
+		SELECT * FROM uol_user WHERE 1 =1
+		<choose>
+			<when test="userName != null">
+				AND username = #{userName}
+			</when>
+			<when test="realName != null">
+				AND realname = #{realName}
+			</when>
+			<when test="sex != null">
+				AND sex = #{sex}
+			</when>
+			<otherwise>
+				AND sex = '女'
+			</otherwise>
+		</choose>
+	</select>
+
+	<!-- 模糊查询 第一种写法 realname LIKE '%xxx%' 用$——不预编译 -->
+	<select id="selectUserLike" parameterType="String"
+		resultMap="userMap">
+		SELECT * FROM uol_user WHERE username LIKE '%${words}%' </select>
+	<!-- 模糊查询，Like，第二种写法,使用Oracle字符串连接符|| -->
+	<!-- <select id="selectUserLike" parameterType="String" resultMap="userMap"> 
+		SELECT * FROM uol_user WHERE username LIKE '%'||#{words}||'%' </select> -->
+	<!-- 模糊查询，Like，第三种写法 -->
+	<!-- <select id="selectUserLike" parameterType="String" resultMap="userMap"> 
+		SELECT * FROM uol_user WHERE username LIKE CONCAT(CONCAT('%',#{words}),'%') 
+		</select> -->
+
+
+	<!-- 动态SQL: set，动态包含需要更新的列，舍去其它的 -->
+	<update id="updateUserIfNecessary"
+		parameterType="com.ychs.uol.model.User">
+		UPDATE uol_user
+		<set>
+			<if test="userName != null">username=#{userName},</if>
+			<if test="userPwd != null">userpsw=#{userPwd},</if>
+			<if test="realName != null">realname=#{realName},</if>
+			<if test="sex != null">sex=#{sex},</if>
+			<if test="job != null">job=#{job},</if>
+			<if test="remark != null">remark=#{remark},</if>
+			<if test="status != null">status=#{status}</if>
+		</set>
+		WHERE userid=#{userId}
+	</update>
+
+    <select id="getUserRecordNum" resultType="int">
+        SELECT COUNT(userid) AS recordnum FROM uol_user
+    </select>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</mapper>

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org/DTD Mapper 3.0" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ychs.uol.mapper.SchoolMapper"> <!-- namespace指定为Mapper接口；面向接口编程，无需程序员实现该接口，由MyBatis完成 -->
+	<insert id="insertSchool"
+		parameterType="com.ychs.uol.model.School"><!-- 全限定的类名 -->
+		<selectKey keyProperty="schoolId" resultType="String"
+			keyColumn="schoolNo" order="BEFORE">
+			SELECT schoolseq.nextval as schoolNo FROM dual
+		</selectKey>
+		INSERT INTO uol_school(schoolid, schoolname, schoolinfo)
+		VALUES(#{schoolId},#{schoolName},#{schoolInfo})
+	</insert>
+	<delete id="deleteSchool" parameterType="String">
+		DELETE uol_school WHERE
+		schoolname = #{schoolName}
+	</delete>
+	<delete id="deleteSchoolByTrigger" parameterType="String">
+		DELETE
+		uol_school WHERE schoolname = #{schoolName}
+	</delete>
+	
+	<!-- 查询学校 -->
+	<select id="selectSchool" resultMap="schoolMap">
+	   SELECT * FROM uol_school 
+	   <where>
+	       <if test="schoolId != null">schoolid = #{schoolId}</if>
+	       <if test="schoolName != null ">AND schoolname = #{schoolName}</if>
+	   </where> 
+	</select>
+	<resultMap type="com.ychs.uol.model.School" id="schoolMap">
+	   <result property="schoolId" column="schoolid"/>
+       <result property="schoolName" column="schoolname"/>
+       <result property="schoolInfo" column="schoolinfo"/>
+	</resultMap>
+		
+	
+</mapper>

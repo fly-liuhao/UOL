@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org/DTD Mapper 3.0" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ychs.uol.mapper.MajorMapper"> <!-- namespace指定为Mapper接口；面向接口编程，无需程序员实现该接口，由MyBatis完成 -->
+	<insert id="insertMajor"
+		parameterType="com.ychs.uol.model.Major"><!-- 全限定的类名 -->
+		<selectKey keyProperty="majorId" resultType="String"
+			keyColumn="majorNo" order="BEFORE">
+			SELECT majorseq.nextval as majorNo FROM dual
+		</selectKey>
+		INSERT INTO uol_major(majorid, majorname, majorinfo, deptid, schoolid)
+		VALUES(#{majorId},#{majorName},#{majorInfo},#{deptId},#{schoolId})
+	</insert>
+
+	<resultMap id="infoMap" type="com.ychs.uol.model.Info">
+		<result property="schoolName" column="schoolname" />
+		<result property="deptName" column="deptname" />
+		<result property="majorName" column="majorname" />
+	</resultMap>
+	<select id="seleteMajorInfo" resultMap="infoMap"
+		parameterType="String">
+		SELECT s.schoolname, d.deptname, m.majorname FROM
+		uol_major m INNER JOIN
+		uol_department d ON m.deptid = d.deptid INNER
+		JOIN uol_school s ON
+		m.schoolid = s.schoolid
+		WHERE m.majorname=#{majorName}
+	</select>
+	
+	<!-- 查询专业 -->
+    <select id="selectMajor" resultMap="majorMap">
+        SELECT * FROM uol_major
+        <where>
+            <if test="majorId != null">majorid = #{majorId}</if>
+            <if test="majorName != null ">AND majorname = #{majorName}</if>
+            <if test="deptId != null ">AND deptid = #{deptId}</if>
+            <if test="schoolId != null ">AND schoolid = #{schoolId}</if>
+        </where>
+    </select>
+    <resultMap id="majorMap" type="com.ychs.uol.model.Major">
+        <result property="majorId" column="majorid" />
+        <result property="majorName" column="majorname" />
+        <result property="majorInfo" column="majorinfo" />
+        <result property="deptId" column="deptid" />
+        <result property="schoolId" column="schoolid" />
+    </resultMap>
+
+	<delete id="deleteMajor" parameterType="String">
+		DELETE uol_major WHERE deptid IN (SELECT schoolid FROM uol_school WHERE schoolName =
+		#{schoolName}))
+	</delete>
+</mapper>

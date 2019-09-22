@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org/DTD Mapper 3.0" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ychs.uol.mapper.OpenCourseMapper"> <!-- namespace指定为Mapper接口；面向接口编程，无需程序员实现该接口，由MyBatis完成 -->
+	<insert id="insertOpenCourse"
+		parameterType="com.ychs.uol.model.OpenCourse"><!-- 全限定的类名 -->
+		INSERT INTO uol_opencourse(courseid, coursedate, coursename,
+		speakername, organizername, place, school, department, grade, explain,
+		remark)
+		VALUES(sys_guid(),TO_DATE(#{courseDate},'yyyy-mm-dd hh24:mi:ss'),#{courseName},#{speakerName},#{organizerName},#{place},#{school},#{department},#{grade},#{explain},#{remark})
+	</insert>
+
+	<select id="selectOpenCourse" parameterType="java.util.Map"
+		resultMap="openCourseMap">
+		SELECT * FROM uol_opencourse
+		<where>
+		    <if test="courseName != null">AND coursename LIKE CONCAT(CONCAT('%',#{courseName}),'%')</if>
+			<if test="startDate != null">AND coursedate &gt;= TO_DATE(#{startDate},'yyyy-mm-dd')</if>
+			<if test="endDate != null">AND coursedate &lt;= TO_DATE(#{endDate},'yyyy-mm-dd')</if>
+			<if test="schoolId != null">AND school = #{schoolId}  </if>
+			<if test="deptId != null">AND department = #{deptId}  </if>
+			<if test="grade != null">AND grade =#{grade}</if>
+		</where>
+	</select>
+	<resultMap type="com.ychs.uol.model.OpenCourse"
+		id="openCourseMap">
+		<result property="courseDate" column="coursedate" />
+		<result property="courseName" column="coursename" />
+		<result property="speakerName" column="speakername" />
+		<result property="orginizerName" column="orginizername" />
+		<result property="place" column="place" />
+		<result property="school" column="school" />
+		<result property="department" column="department" />
+		<result property="grade" column="grade" />
+		<result property="explain" column="explain" />
+		<result property="remark" column="remark" />
+	</resultMap>
+</mapper>

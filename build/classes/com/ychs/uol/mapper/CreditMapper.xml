@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org/DTD Mapper 3.0" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ychs.uol.mapper.CreditMapper"> <!-- namespace指定为Mapper接口；面向接口编程，无需程序员实现该接口，由MyBatis完成 -->
+	<insert id="insertCredit"
+		parameterType="com.ychs.uol.model.Credit"><!-- 全限定的类名 -->
+		INSERT INTO uol_credit(stuname, stuid, score, remark)
+		VALUES(#{stuName},#{stuId},#{score},#{remark})
+	</insert>
+
+	<select id="selectCredit" parameterType="java.util.Map"
+		resultMap="creditMap">
+		SELECT * FROM uol_credit 
+		  <where>
+            <if test="stuName != null">AND stuname LIKE CONCAT(CONCAT('%',#{stuName}),'%') </if>
+            <if test="stuId != null">AND stuid LIKE CONCAT(CONCAT('%',#{stuId}),'%')</if>
+            <if test="school != null">AND school LIKE CONCAT(CONCAT('%',#{school}),'%')</if>
+            <if test="score != null">AND score=#{score}</if>
+        </where>
+	</select>
+	<resultMap type="com.ychs.uol.model.Credit" id="creditMap">
+		<result property="stuName" column="stuname" />
+		<result property="stuId" column="stuid" />
+		<result property="score" column="score" />
+		<result property="remark" column="remark" />
+	</resultMap>
+
+</mapper>

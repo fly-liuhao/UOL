@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org/DTD Mapper 3.0" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ychs.uol.mapper.CourseMemberMapper"> <!-- namespace指定为Mapper接口；面向接口编程，无需程序员实现该接口，由MyBatis完成 -->
+	<insert id="insertCourseMember"
+		parameterType="com.ychs.uol.model.CourseMember"><!-- 全限定的类名 -->
+		INSERT INTO uol_coursemember(memberid, coursedate, membername,
+		sex,school,department, grade, phonenumber, email)
+		VALUES(#{memberId},TO_DATE(#{courseDate},'yyyy-mm-dd hh24:mi:ss'),#{memberName},#{sex},#{school},#{department},#{grade},#{phoneNumber},#{email})
+	</insert>
+
+	<select id="selectCourseMember" parameterType="java.util.Map"
+		resultMap="courseMemberMap">
+        SELECT * FROM uol_coursemember 
+        <where>
+            <if test="memberName != null">AND membername LIKE CONCAT(CONCAT('%',#{memberName}),'%') </if>
+            <if test="sex != null">AND sex=#{sex}</if>
+            <if test="school != null">AND school=#{school}</if>
+            <if test="department != null">AND department=#{department}</if>
+            <if test="grade != null">AND grade=#{grade}</if>
+            <if test="phoneNumber != null">AND phonenumber LIKE CONCAT(CONCAT('%',#{phoneNumber}),'%')</if>
+        </where>
+	</select>
+
+	<resultMap type="com.ychs.uol.model.CourseMember"
+		id="courseMemberMap">
+		<result property="courseDate" column="coursedate" />
+		<result property="memberName" column="membername" />
+		<result property="sex" column="sex" />
+		<result property="school" column="school" />
+		<result property="department" column="department" />
+		<result property="grade" column="grade" />
+		<result property="phoneNumber" column="phonenumber" />
+		<result property="email" column="email" />
+	</resultMap>
+</mapper>
